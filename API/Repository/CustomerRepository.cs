@@ -4,6 +4,7 @@ using API.Interfaces.Repository;
 using CountryValidation;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using System.Text.RegularExpressions;
 
 namespace API.Repository
@@ -47,11 +48,13 @@ namespace API.Repository
             if (customer == null)
                 return $"Customer {obj.CustomerId} doesn't exists";
 
-            var validate = ValidateCustomer(customer);
+            _context.ChangeTracker.Clear();
+
+            var validate = ValidateCustomer(obj);
 
             if(string.IsNullOrEmpty(validate))
             {
-                _context.Update(customer);
+                _context.Update(obj);
                 _context.SaveChanges();
                 return "";
             }
